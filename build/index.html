@@ -1,0 +1,1518 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link rel="apple-touch-icon" sizes="76x76" href="static/assets/img/pillars.svg">
+<link rel="icon" type="image/png" href="static/assets/img/pillars.svg">
+
+<title>
+  BaziCal
+</title>
+
+<link rel="canonical" href="https://app-generator.dev/product/soft-ui-dashboard/flask/" />
+
+<!--     Fonts and icons     -->
+<link href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700,800" rel="stylesheet" />
+<!-- Nucleo Icons -->
+<link href="https://demos.creative-tim.com/argon-dashboard-pro/assets/css/nucleo-icons.css" rel="stylesheet" />
+<link href="https://demos.creative-tim.com/argon-dashboard-pro/assets/css/nucleo-svg.css" rel="stylesheet" />
+<!-- Font Awesome Icons -->
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.0/js/all.min.js" crossorigin="anonymous"></script>
+<!-- CSS Files -->
+<link id="pagestyle" href="static/assets/css/soft-ui-dashboard.css?v=1.1.0" rel="stylesheet" />
+  
+  <style>
+    /* full grid around every cell */
+    .table-fullgrid {
+      border-collapse: collapse;
+      width: 60% !important;
+      margin: 0 !important;
+    }
+    .table-fullgrid th,
+    .table-fullgrid td {
+      border: 1px solid #dee2e6 !important;
+    }
+
+    /* Make the label column narrower */
+    .table-fullgrid td:last-child,
+    .table-fullgrid th:last-child {
+      width: 120px !important;
+    }
+
+    /* Uniform heights */
+    .uniform-height {
+      height: 35px !important;
+      display: flex !important;
+      align-items: center !important;
+      padding: 0.375rem 0.75rem !important;
+      overflow: visible !important;
+    }
+    .uniform-height input {
+      border: none !important;
+      background: transparent !important;
+      flex: 1 !important;
+      height: 100% !important;
+      padding: 0 !important;
+    }
+
+    /* Time-picker styling */
+    .time-wrapper {
+      position: relative !important;
+      display: flex !important;
+      align-items: center !important;
+      flex: 1 !important;
+      width: 100% !important;
+    }
+    .time-wrapper input {
+      width: 100% !important;
+      padding-right: 2.5rem !important;
+    }
+    .time-wrapper .dropdown-menu {
+      position: absolute !important;
+      top: 100%    !important;  /* sit just below the input */
+      left: 0      !important;  /* align left edges */
+      right: auto  !important;
+      width: 6rem  !important;
+      margin-top: 0.25rem !important;
+      z-index: 1050 !important;
+    }
+    /* Tuck the dropdown-toggle inside the input */
+    .time-wrapper .dropdown-toggle {
+      position: absolute !important;
+      top: 50% !important;
+      right: 0.5rem !important;
+      transform: translateY(-50%) !important;
+      width: 1.5rem !important;
+      height: 1.5rem !important;
+      padding: 0 !important;
+      z-index: 2 !important;
+      border: none !important;
+      background: transparent !important;
+    }
+
+    /* Calculate button (original styling) */
+    .calculate-btn {
+      width: 100% !important;
+      height: 30px !important;
+      margin-top: 8px !important;
+      font-size: 12px !important;
+      line-height: 1 !important;
+      padding: 0 8px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 5px !important;
+      border: none !important;
+    }
+    .calculate-btn i {
+      font-size: 10px !important;
+    }
+
+    /* Grayed-out unknown hour */
+    .grayed-out {
+      background-color: #e9ecef !important;
+      color: #6c757d !important;
+    }
+    .grayed-out input {
+      pointer-events: none !important;
+    }
+    .grayed-out .dropdown-toggle {
+      pointer-events: auto !important;
+    }
+
+    /* Thin GM row */
+    .gm-row {
+      height: 25px !important;
+      line-height: 1 !important;
+    }
+    .gm-row td {
+      padding: 2px 8px !important;
+      height: 25px !important;
+      vertical-align: middle !important;
+    }
+
+    /* Equal widths for Birth Chart columns */
+    .table th,
+    #birthChartRow .table {
+      table-layout: fixed;
+      width: 100% !important;
+    }
+
+    /* force each of the four columns to be exactly 25%, and center text */
+    #birthChartRow .table th,
+    #birthChartRow .table td {
+      text-transform: uppercase;       /* .text-uppercase */
+      font-size: 0.625rem !important;  /* .text-xxs */
+      font-weight: 700 !important;     /* .font-weight-bolder */
+      color: #6c757d !important;       /* .text-secondary */
+      opacity: 0.7 !important;         /* .opacity-7 */
+      width: 25% !important;      /* equal columns */
+      text-align: center !important;
+      vertical-align: middle !important;
+    }
+    /* force headers to stay muted */
+    #birthChartRow .table th {
+      /* nothing—this just ensures our later rule doesn’t apply here */
+    }
+
+    /* force all data‐cell text to black */
+    #birthChartRow .table td,
+    #birthChartRow .stem-cell div,
+    #birthChartRow .hs-item {
+      color: #000 !important;
+      opacity: 1    !important; /* reset any inherited opacity */
+    }
+    .stem-cell {
+      padding: .375rem .75rem !important;  /* match uniform-height padding */
+      line-height: 1.2;
+    }
+    .stem-cell div {
+      margin: 0;
+    }
+    #birthChartRow tbody tr:nth-child(4) td {
+      padding-top: 0 !important;
+      padding-bottom: 0 !important;
+    }
+    /* Inner flex‐wrapper for hidden stems */
+    .hs-flex {
+      display: flex !important;
+      justify-content: space-evenly;  /* even spacing across full width */
+      align-items: center;            /* vertically center */
+      width: 100%;                    /* fill the cell’s width */
+      padding: 0 !important;
+    }
+
+    .hs-item {
+      display: inline-block;       /* shrink‐wrap the background */
+      padding: 0.25rem 0.25rem;     /* give it some breathing room */
+      border-radius: 0.2rem;      /* optional rounded edges */
+      text-align: center;
+      line-height: 1.5;
+      /* no flex:1 here—each item will size to its own text */
+      margin: 0.0rem;               /* a little gap on left/right */
+    }
+    /* ———————————————————————————————————————
+     Elemental background colors (20% opacity)
+     ——————————————————————————————————————— */
+    .bg-wood {
+      background-color: rgba(34, 139, 34, 0.3) !important;   /* ForestGreen @ 20% */
+    }
+    .bg-fire {
+      background-color: rgba(220, 20, 60, 0.3) !important;   /* Crimson  @ 20% */
+    }
+    .bg-earth {
+      background-color: rgba(255, 165, 0, 0.3) !important;  /* GoldenRod @ 20% */
+    }
+    .bg-metal {
+      background-color: rgba(250, 250, 250, 1) !important; /* LightGray @ 20% */
+    }
+    .bg-water {
+      background-color: rgba(30, 144, 255, 0.3) !important;  /* DodgerBlue@ 20% */
+    }
+
+    #locationDropdown {
+      display: none; /* will be set to block by JS */
+      position: absolute;
+      top: 100%; /* places dropdown below input */
+      left: 0;
+      width: 100%; /* same width as the input */
+      z-index: 2000;
+      max-height: 200px;
+      overflow-y: auto;
+      background: #fff;
+      border: 1px solid #ced4da;
+      border-radius: 0.25rem;
+      box-shadow: 0 0.2rem 0.5rem rgba(0,0,0,0.08);
+      padding: 0;
+    }
+  </style>
+
+
+  <style>
+    /* 1. Make the page a column‐flex spanning the full viewport */
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    *, *::before, *::after {
+    box-sizing: border-box;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* 2. Let <main> take all available space and scroll if needed */
+    main.main-content {
+      flex: 1 1 auto;
+      overflow-y: auto;
+    }
+
+    /* 3. Ensure footer (and configurator) sit below <main> */
+    /* No extra styles needed here—footer simply comes last */
+  </style>
+</head>
+
+<body class="g-sidenav-show bg-gray-100">
+  
+    <aside class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3" data-color="primary" id="sidenav-main">
+    <!-- Add a wrapper div with full height -->
+    <div style="min-height: 100vh;" class="d-flex flex-column">
+        <div class="sidenav-header">
+            <i class="fas fa-times p-3 cursor-pointer text-secondary opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
+            <a class="navbar-brand m-0" href="./index">
+                <img src="static/assets/img/pillars.svg" class="navbar-brand-img h-100" alt="main_logo">
+                <span class="ms-1 font-weight-bold">BaziCal</span>
+            </a>
+        </div>
+        <hr class="horizontal dark mt-0">
+
+        <!-- Make this div scrollable -->
+        <div class="collapse navbar-collapse" id="sidenav-collapse-main" style="min-height: 0;">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link active" href="./index">
+                        <span class="nav-link-text ms-1">Lunar Bazi</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Spacer to push footer to bottom -->
+        <div class="flex-grow-1"></div>
+
+        <!-- Footer will stay at bottom -->
+        <div class="sidenav-footer mx-3">
+            <div class="card card-background shadow-none card-background-mask-secondary" id="sidenavCard">
+                <div class="full-background" style="background-image: url(static/assets/img/curved-images/white-curved.jpg)"></div>
+                <div class="card-body text-start p-3 w-100">
+                    <div class="icon icon-shape icon-sm bg-white shadow text-center mb-3 d-flex align-items-center justify-content-center border-radius-md">
+                        <i class="fas fa-question-circle text-dark text-gradient text-lg top-0" aria-hidden="true" id="sidenavCardIcon"></i>
+                    </div>
+                    <div class="docs-info">
+                        <h6 class="text-white up mb-0">Need help?</h6>
+                        <p class="text-xs font-weight-bold">Please check our documentation</p>
+                        <a href="https://google.com" target="_blank" class="btn btn-white btn-sm w-100 mb-0">Documentation</a>
+                    </div>
+                </div>
+            </div>
+            <a class="btn btn-primary mt-3 w-100 mb-3" href="https://google.com">Upgrade to PRO</a>
+        </div>
+    </div>
+</aside>
+  
+
+  <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg">
+    
+      <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl" id="navbarBlur" navbar-scroll="true">
+    <div class="container-fluid py-1 px-3">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+          <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">Pages</a></li>
+          <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Lunar Bazi</li>
+        </ol>
+        <h6 class="font-weight-bolder mb-0">Lunar Bazi</h6>
+      </nav>
+      <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
+        <div class="ms-md-auto pe-md-3 d-flex align-items-center">
+        </div>
+        <ul class="navbar-nav  justify-content-end">
+          <li class="nav-item d-flex align-items-center">
+            
+            <a href="./login" class="nav-link text-body font-weight-bold px-0">
+              <i class="fa fa-user me-sm-1"></i>
+              <span class="d-sm-inline d-none">Sign In</span>
+            </a>
+            
+          </li>
+          <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
+            <a href="javascript:;" class="nav-link text-body p-0" id="iconNavbarSidenav">
+              <div class="sidenav-toggler-inner">
+                <i class="sidenav-toggler-line"></i>
+                <i class="sidenav-toggler-line"></i>
+                <i class="sidenav-toggler-line"></i>
+              </div>
+            </a>
+          </li>
+          <li class="nav-item px-3 d-flex align-items-center">
+            <a href="javascript:;" class="nav-link text-body p-0">
+              <i class="fa fa-cog fixed-plugin-button-nav cursor-pointer"></i>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+</nav>
+    
+
+    
+  <div class="container-fluid py-4">
+    <div class="row">
+      <!-- Date & Time Inputs -->
+      <div class="col-lg-3 col-md-4 col-sm-6 col-6 mt-4">
+        <div class="card shadow">
+          <div class="card-body p-3">
+            <div class="mb-2">
+              <label for="dateInput" class="form-label">Date</label>
+              <div class="form-control uniform-height">
+                <input type="date" id="dateInput">
+              </div>
+            </div>
+            <div class="mb-2">
+              <label for="timeInput" class="form-label">Time</label>
+              <div class="form-control uniform-height" id="timeContainer">
+                <div class="time-wrapper">
+                  <input
+                    type="text"
+                    id="timeInput"
+                    placeholder="HH:MM"
+                    pattern="^([01]\\d|2[0-3]):([0-5]\\d)$"
+                  >
+                  <button
+                    class="dropdown-toggle"
+                    type="button"
+                    id="timeDropdown"
+                    data-bs-toggle="dropdown"
+                    data-bs-display="static"
+                  >  <!-- ← close the tag here! -->
+                    <i class="fas fa-chevron-down"></i>
+                  </button>
+
+                  <div class="dropdown-menu p-0"
+                       style="max-height:200px; overflow-y:auto; width:6rem;">
+                    <button class="dropdown-item time-option py-1 text-center text-muted"
+                            data-value="unknown">Unknown Hour</button>
+                    <div class="dropdown-divider"></div>
+                    
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="00:00">00:00</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="00:15">00:15</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="00:30">00:30</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="00:45">00:45</button>
+                      
+                    
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="01:00">01:00</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="01:15">01:15</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="01:30">01:30</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="01:45">01:45</button>
+                      
+                    
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="02:00">02:00</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="02:15">02:15</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="02:30">02:30</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="02:45">02:45</button>
+                      
+                    
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="03:00">03:00</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="03:15">03:15</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="03:30">03:30</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="03:45">03:45</button>
+                      
+                    
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="04:00">04:00</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="04:15">04:15</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="04:30">04:30</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="04:45">04:45</button>
+                      
+                    
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="05:00">05:00</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="05:15">05:15</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="05:30">05:30</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="05:45">05:45</button>
+                      
+                    
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="06:00">06:00</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="06:15">06:15</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="06:30">06:30</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="06:45">06:45</button>
+                      
+                    
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="07:00">07:00</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="07:15">07:15</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="07:30">07:30</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="07:45">07:45</button>
+                      
+                    
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="08:00">08:00</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="08:15">08:15</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="08:30">08:30</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="08:45">08:45</button>
+                      
+                    
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="09:00">09:00</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="09:15">09:15</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="09:30">09:30</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="09:45">09:45</button>
+                      
+                    
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="10:00">10:00</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="10:15">10:15</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="10:30">10:30</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="10:45">10:45</button>
+                      
+                    
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="11:00">11:00</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="11:15">11:15</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="11:30">11:30</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="11:45">11:45</button>
+                      
+                    
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="12:00">12:00</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="12:15">12:15</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="12:30">12:30</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="12:45">12:45</button>
+                      
+                    
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="13:00">13:00</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="13:15">13:15</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="13:30">13:30</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="13:45">13:45</button>
+                      
+                    
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="14:00">14:00</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="14:15">14:15</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="14:30">14:30</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="14:45">14:45</button>
+                      
+                    
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="15:00">15:00</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="15:15">15:15</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="15:30">15:30</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="15:45">15:45</button>
+                      
+                    
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="16:00">16:00</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="16:15">16:15</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="16:30">16:30</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="16:45">16:45</button>
+                      
+                    
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="17:00">17:00</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="17:15">17:15</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="17:30">17:30</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="17:45">17:45</button>
+                      
+                    
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="18:00">18:00</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="18:15">18:15</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="18:30">18:30</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="18:45">18:45</button>
+                      
+                    
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="19:00">19:00</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="19:15">19:15</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="19:30">19:30</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="19:45">19:45</button>
+                      
+                    
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="20:00">20:00</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="20:15">20:15</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="20:30">20:30</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="20:45">20:45</button>
+                      
+                    
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="21:00">21:00</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="21:15">21:15</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="21:30">21:30</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="21:45">21:45</button>
+                      
+                    
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="22:00">22:00</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="22:15">22:15</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="22:30">22:30</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="22:45">22:45</button>
+                      
+                    
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="23:00">23:00</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="23:15">23:15</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="23:30">23:30</button>
+                      
+                        
+                        
+                        <button class="dropdown-item time-option py-1 text-center"
+                                data-value="23:45">23:45</button>
+                      
+                    
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="mb-2">
+              <label for="locationInput" class="form-label">Location</label>
+              <div style="position: relative;">
+                <input type="text" id="locationInput" placeholder="Start typing a city" autocomplete="off" class="form-control uniform-height">
+                <div id="locationDropdown" class="dropdown-menu show" style="display:none; position:absolute; top:100%; left:0; width:100%;"></div>
+              </div>
+            </div>
+            <button class="btn btn-primary calculate-btn"
+                    id="calculateBtn">
+              <i class="fas fa-calculator"></i>
+              <span>Calculate</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Results: Moon Phase & Chinese Date -->
+      <div class="col-lg-5 col-md-6 col-sm-6 col-12 mt-4">
+        <div class="card shadow">
+          <div class="card-body p-3">
+            <div class="row mb-3">
+              <div class="col-6">
+                <label for="moonPhase" class="form-label">Moon Phase</label>
+                <div class="form-control bg-light uniform-height"
+                     id="moonPhase" readonly></div>
+              </div>
+              <div class="col-6">
+                <label for="season" class="form-label">Season</label>
+                <div class="form-control bg-light uniform-height"
+                     id="season" readonly></div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-2">
+                <label class="form-label">Cycle</label>
+                <div class="form-control bg-light uniform-height"
+                     id="cycleValue" readonly></div>
+              </div>
+              <div class="col-5">
+                <label class="form-label">Year</label>
+                <div class="form-control bg-light uniform-height"
+                     id="yearValue" readonly></div>
+              </div>
+              <div class="col-2">
+                <label class="form-label">Month</label>
+                <div class="form-control bg-light uniform-height"
+                     id="monthValue" readonly></div>
+              </div>
+              <div class="col-2">
+                <label class="form-label">Day</label>
+                <div class="form-control bg-light uniform-height"
+                     id="dayValue" readonly></div>
+              </div>
+            </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Birth Chart table, hidden by default -->
+    <div class="row mt-4" id="birthChartRow" style="display: none;">
+      <div class="col-8">
+        <div class="card mb-4">
+          <div class="card-header pb-0">
+            <h6>Birth Chart</h6>
+          </div>
+          <div class="card-body px-0 pt-0 pb-2">
+            <div class="table-responsive p-0">
+              <table class="table align-items-center mb-0">
+                <thead>
+                  <tr>
+                    <th id="bhHour" class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"></th>
+                    <th id="bhDay" class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2"></th>
+                    <th id="bhMonth" class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2"></th>
+                    <th id="bhYear" class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2"></th>
+                  </tr>
+                </thead>
+                <tbody id="birthChartTbody">
+                  <!-- JS will insert 1 data row + 4 blank rows -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  </main>
+
+  
+    <div class="fixed-plugin">
+    <a class="fixed-plugin-button text-dark position-fixed px-3 py-2">
+      <i class="fa fa-cog py-2"> </i>
+    </a>
+    <div class="card shadow-lg ">
+      <div class="card-header pb-0 pt-3 ">
+        <div class="float-start">
+          <h5 class="mt-3 mb-0">Platform setting</h5>
+          <p>Select the platform options.</p>
+        </div>
+        <div class="float-end mt-4">
+          <button class="btn btn-link text-dark p-0 fixed-plugin-close-button">
+            <i class="fa fa-close"></i>
+          </button>
+        </div>
+        <!-- End Toggle Button -->
+      </div>
+      <hr class="horizontal dark my-1">
+      <div class="card-body pt-sm-3 pt-0">
+        <!-- Sidebar Backgrounds -->
+        <div>
+          <h6 class="mb-0">Sidebar Colors</h6>
+        </div>
+        <a href="javascript:void(0)" class="switch-trigger background-color">
+          <div class="badge-colors my-2 text-start">
+            <span class="badge filter bg-primary active" data-color="primary" onclick="sidebarColor(this)"></span>
+            <span class="badge filter bg-gradient-dark" data-color="dark" onclick="sidebarColor(this)"></span>
+            <span class="badge filter bg-gradient-info" data-color="info" onclick="sidebarColor(this)"></span>
+            <span class="badge filter bg-gradient-success" data-color="success" onclick="sidebarColor(this)"></span>
+            <span class="badge filter bg-gradient-warning" data-color="warning" onclick="sidebarColor(this)"></span>
+            <span class="badge filter bg-gradient-danger" data-color="danger" onclick="sidebarColor(this)"></span>
+          </div>
+        </a>
+        <!-- Sidenav Type -->
+        <div class="mt-3">
+          <h6 class="mb-0">Side navigation Type</h6>
+          <p class="text-sm">Choose between 2 different sidenav types.</p>
+        </div>
+        <div class="d-flex">
+          <button class="btn btn-primary w-100 px-3 mb-2 active" data-class="bg-transparent" onclick="sidebarType(this)">Transparent</button>
+          <button class="btn btn-primary w-100 px-3 mb-2 ms-2" data-class="bg-white" onclick="sidebarType(this)">White</button>
+        </div>
+        <p class="text-sm d-xl-none d-block mt-2">You can change the sidenav type just on desktop view.</p>
+        <!-- Navbar Fixed -->
+        <div class="mt-3">
+          <h6 class="mb-0">Navigation bar Fixed</h6>
+        </div>
+        <div class="form-check form-switch ps-0">
+          <input class="form-check-input mt-1 ms-auto" type="checkbox" id="navbarFixed" onclick="navbarFixed(this)">
+        </div>
+        <hr class="horizontal dark my-sm-4">
+        <a class="btn bg-gradient-dark w-100" href="https://google.com">Download</a>
+        <a class="btn btn-outline-dark w-100" href="https://google.com">Documentation</a>
+
+      </div>
+    </div>
+</div>
+  
+
+  <footer class="footer pt-3  ">
+    <div class="container-fluid">
+      <div class="row align-items-center justify-content-lg-between">
+        <div class="col-lg-6 mb-lg-0 mb-4">
+        </div>
+        <div class="col-lg-6">
+          <ul class="nav nav-footer justify-content-center justify-content-lg-end">
+            <li class="nav-item">
+              <a href="https://google.com" class="nav-link text-muted">Download</a>
+            </li>
+            <li class="nav-item">
+              <a href="https://google.com" class="nav-link text-muted">Documentation</a>
+            </li>
+            <li class="nav-item">
+              <a href="https://google.com" class="nav-link text-muted">PRO Version</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+</footer>
+  <!--   Core JS Files   -->
+<script src="static/assets/js/core/popper.min.js"></script>
+<script src="static/assets/js/core/bootstrap.min.js"></script>
+<script src="static/assets/js/plugins/perfect-scrollbar.min.js"></script>
+<script src="static/assets/js/plugins/smooth-scrollbar.min.js"></script>
+
+<script>
+    var win = navigator.platform.indexOf('Win') > -1;
+    if (win && document.querySelector('#sidenav-scrollbar')) {
+        var options = {
+        damping: '0.5'
+        }
+        Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
+    }
+</script>
+<!-- Github buttons -->
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+<!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
+<script src="static/assets/js/soft-ui-dashboard.min.js?v=1.1.0"></script>
+  
+  <script src="static/assets/js/plugins/chartjs.min.js"></script>
+  <script>
+    // time-picker dropdown logic
+    document.querySelectorAll('.time-option').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const v  = btn.dataset.value;
+        const ti = document.getElementById('timeInput');
+        const tc = document.getElementById('timeContainer');
+        if (v === 'unknown') {
+          ti.value = 'Unknown Hour';
+          tc.classList.add('grayed-out');
+        } else {
+          ti.value = v;
+          tc.classList.remove('grayed-out');
+        }
+      });
+    });
+
+    // — Dynamic Location type-ahead —
+    function debounce(fn, delay) {
+      let t;
+      return (...args) => {
+        clearTimeout(t);
+        t = setTimeout(() => fn.apply(this, args), delay);
+      };
+    }
+
+    const locInput = document.getElementById('locationInput');
+    const dropdown = document.getElementById('locationDropdown');
+
+    let currentFocus = -1;
+
+    // Helper: Debounce
+    function debounce(fn, delay) {
+      let t;
+      return (...args) => {
+        clearTimeout(t);
+        t = setTimeout(() => fn.apply(this, args), delay);
+      };
+    }
+
+    locInput.addEventListener('input', debounce(async function (e) {
+      const term = e.target.value;
+      if (term.length < 2) {
+        dropdown.style.display = 'none';
+        dropdown.innerHTML = '';
+        return;
+      }
+      try {
+        const res = await fetch(`/api/cities?q=${encodeURIComponent(term)}`);
+        const cities = res.ok ? await res.json() : [];
+        dropdown.innerHTML = '';
+        if (cities.length === 0) {
+          dropdown.style.display = 'none';
+          return;
+        }
+        cities.forEach((city, i) => {
+          const item = document.createElement('div');
+          item.className = 'dropdown-item';
+          item.tabIndex = 0;
+          item.textContent = city;
+          item.addEventListener('click', function () {
+            locInput.value = city;
+            dropdown.style.display = 'none';
+          });
+          dropdown.appendChild(item);
+        });
+        dropdown.style.display = 'block';
+        currentFocus = -1;
+      } catch (err) {
+        console.error('City lookup failed:', err);
+        dropdown.style.display = 'none';
+      }
+    }, 300));
+
+    // Keyboard navigation
+    locInput.addEventListener('keydown', function(e) {
+      let items = dropdown.querySelectorAll('.dropdown-item');
+      if (!items.length || dropdown.style.display === 'none') return;
+      if (e.key === 'ArrowDown') {
+        currentFocus = (currentFocus + 1) % items.length;
+        setActive(items, currentFocus);
+        e.preventDefault();
+      } else if (e.key === 'ArrowUp') {
+        currentFocus = (currentFocus - 1 + items.length) % items.length;
+        setActive(items, currentFocus);
+        e.preventDefault();
+      } else if (e.key === 'Enter') {
+        if (currentFocus > -1) {
+          items[currentFocus].click();
+          e.preventDefault();
+        }
+      }
+    });
+
+    function setActive(items, idx) {
+      items.forEach((el, i) => {
+        el.classList.toggle('active', i === idx);
+        if (i === idx) el.scrollIntoView({ block: 'nearest' });
+      });
+    }
+
+    // Hide dropdown when clicking outside
+    document.addEventListener('click', function (e) {
+      if (!locInput.contains(e.target) && !dropdown.contains(e.target)) {
+        dropdown.style.display = 'none';
+      }
+    });
+
+
+    // Calculate button handler
+    document.getElementById('calculateBtn').addEventListener('click', async () => {
+      const dateInput     = document.getElementById('dateInput');
+      const timeInput     = document.getElementById('timeInput');
+      const timeContainer = document.getElementById('timeContainer');
+      const moonPhaseEl   = document.getElementById('moonPhase');
+      const seasonEl      = document.getElementById('season');
+
+      // 1) Validate date
+      if (!dateInput.value) {
+        alert('❌ Please select a date.');
+        return;
+      }
+
+      // 2) Default to Unknown Hour
+      if (!timeInput.value.trim()) {
+        timeInput.value = 'Unknown Hour';
+        timeContainer.classList.add('grayed-out');
+      }
+
+      // 3) Show “loading”
+      moonPhaseEl.textContent = '⏳ Calculating…';
+      seasonEl.textContent    = '';
+
+      // 4) Build moon-phase query
+      let qs = `?date=${encodeURIComponent(dateInput.value)}`;
+      if (timeInput.value !== 'Unknown Hour') {
+        qs += `&time=${encodeURIComponent(timeInput.value)}`;
+      }
+
+      // grab location + client offset (minutes east of UTC)
+      const loc      = document.getElementById('locationInput').value.trim();
+      const tzOffset = -new Date().getTimezoneOffset();  // e.g. Paris +120
+
+      try {
+        const res  = await fetch(`/api/moon_phase${qs}`);
+        if (!res.ok) throw new Error(res.statusText);
+        const data = await res.json();
+        moonPhaseEl.textContent = data.phase_name;
+      } catch (err) {
+        console.error('Moon-phase error:', err);
+        alert(`⚠️ Error calculating moon phase:\n${err.message}`);
+        moonPhaseEl.textContent = '';
+      }
+
+      // 5) Chinese date query
+      try {
+        const chRes  = await fetch(`/api/chinese_date?date=${encodeURIComponent(dateInput.value)}`);
+        if (!chRes.ok) throw new Error((await chRes.json()).error || chRes.statusText);
+        const chData = await chRes.json();
+
+        // 6) BaZi pillars
+        let baziQs = `?date=${encodeURIComponent(dateInput.value)}`;
+        if (timeInput.value !== 'Unknown Hour') {
+          baziQs += `&time=${encodeURIComponent(timeInput.value)}`;
+        }
+        const loc = document.getElementById('locationInput').value.trim();
+        if (loc) {
+          baziQs += `&location=${encodeURIComponent(loc)}`;
+        }
+        const bzRes = await fetch(`/api/bazi${baziQs}`);
+        const bzData = await bzRes.json();
+
+        // Decide what to show in the Hour <th>...
+        let displayHour = timeInput.value;  // default: what user typed
+
+        // If the server gave us a solar_time override, format it:
+        if (bzData.solar_time) {
+          const { hour, minute } = bzData.solar_time;
+          displayHour = `${String(hour).padStart(2,'0')}:`
+                      + `${String(minute).padStart(2,'0')}`;
+        }
+
+        // Write that into the table header cell:
+        document.getElementById('bhHour').textContent = displayHour;
+        // ───────────────────
+
+        // pull year out of the response:
+        const yGm               = bzData.year.GM;
+        const yStemPinyin      = bzData.year.Stem.pinyin;
+        const yStemChar        = bzData.year.Stem.chinese_char;
+        const yStemOrgan       = bzData.year.Stem.organ;
+        const yStemPhase       = bzData.year.Stem.phase;        // e.g. "Wood"
+        const yBranchPinyin    = bzData.year.Branch.pinyin;
+        const yBranchChar      = bzData.year.Branch.chinese_char;
+        const yBranchOrgan     = bzData.year.Branch.organ;
+        const yBranchPhase     = bzData.year.Branch.phase;      // e.g. "Fire"
+        const yHiddenStems     = bzData.year.HS;                // array
+        const yGmClass        = 'bg-' + yGm.toLowerCase();               // bg-earth, bg-water, etc.
+        const yStemClass      = 'bg-' + yStemPhase.toLowerCase();        // bg-wood, …
+        const yBranchClass    = 'bg-' + yBranchPhase.toLowerCase();      // bg-fire, …
+
+        // pull month out of the response:
+        const mGm            = bzData.month.GM;
+        const mStemPinyin    = bzData.month.Stem.pinyin;
+        const mStemChar      = bzData.month.Stem.chinese_char;
+        const mStemOrgan     = bzData.month.Stem.organ;
+        const mStemPhase     = bzData.month.Stem.phase;    // e.g. "Wood"
+        const mBranchPinyin  = bzData.month.Branch.pinyin;
+        const mBranchChar    = bzData.month.Branch.chinese_char;
+        const mBranchOrgan   = bzData.month.Branch.organ;
+        const mBranchPhase   = bzData.month.Branch.phase;
+        const mHiddenStems   = bzData.month.HS;            // array of {pinyin,chinese_char,organ,phase}
+        const mGmClass    = 'bg-' + mGm.toLowerCase();
+        const mStemClass  = 'bg-' + mStemPhase.toLowerCase();
+        const mBranchClass= 'bg-' + mBranchPhase.toLowerCase();
+
+        // pull day out of the response:
+        const dGm            = bzData.day.GM;
+        const dStemPinyin    = bzData.day.Stem.pinyin;
+        const dStemChar      = bzData.day.Stem.chinese_char;
+        const dStemOrgan     = bzData.day.Stem.organ;
+        const dStemPhase     = bzData.day.Stem.phase;    // e.g. "Wood"
+        const dBranchPinyin  = bzData.day.Branch.pinyin;
+        const dBranchChar    = bzData.day.Branch.chinese_char;
+        const dBranchOrgan   = bzData.day.Branch.organ;
+        const dBranchPhase   = bzData.day.Branch.phase;
+        const dHiddenStems   = bzData.day.HS;            // array of {pinyin,chinese_char,organ,phase}
+        const dGmClass    = 'bg-' + dGm.toLowerCase();
+        const dStemClass  = 'bg-' + dStemPhase.toLowerCase();
+        const dBranchClass= 'bg-' + dBranchPhase.toLowerCase();
+
+        // pull hour out of the response:
+        let hGm, hStemPinyin, hStemChar, hStemOrgan, hStemPhase;
+        let hBranchPinyin, hBranchChar, hBranchOrgan, hBranchPhase;
+        let hHiddenStems, hGmClass, hStemClass, hBranchClass;
+        const hasHour = timeInput.value !== 'Unknown Hour';
+
+        if (hasHour) {
+          hGm           = bzData.hour.GM;
+          hStemPinyin   = bzData.hour.Stem.pinyin;
+          hStemChar     = bzData.hour.Stem.chinese_char;
+          hStemOrgan    = bzData.hour.Stem.organ;
+          hStemPhase    = bzData.hour.Stem.phase;
+
+          hBranchPinyin = bzData.hour.Branch.pinyin;
+          hBranchChar   = bzData.hour.Branch.chinese_char;
+          hBranchOrgan  = bzData.hour.Branch.organ;
+          hBranchPhase  = bzData.hour.Branch.phase;
+
+          hHiddenStems  = bzData.hour.HS;
+
+          hGmClass      = 'bg-' + hGm.toLowerCase();
+          hStemClass    = 'bg-' + hStemPhase.toLowerCase();
+          hBranchClass  = 'bg-' + hBranchPhase.toLowerCase();
+        }
+
+        // populate existing fields
+        seasonEl.textContent = chData.chinese_season;
+        document.getElementById('cycleValue').textContent  = chData.cycle;
+        document.getElementById('yearValue').textContent   = `${chData.year} - ${chData.name}`;
+        document.getElementById('monthValue').textContent  = chData.month + (chData.is_leap_month ? ' (leap)' : '');
+        document.getElementById('dayValue').textContent    = chData.day;
+
+        // prepare birth chart
+        const rowContainer = document.getElementById('birthChartRow');
+        const tbody        = document.getElementById('birthChartTbody');
+        tbody.innerHTML = '';
+
+        // dynamic headers
+        const [Y, M, D] = dateInput.value.split('-');
+        const H = (timeInput.value && timeInput.value !== 'Unknown Hour')
+                    ? timeInput.value
+                    : 'Unknown Hour';
+        document.getElementById('bhYear').textContent  = Y;
+        document.getElementById('bhMonth').textContent = M;
+        document.getElementById('bhDay').textContent   = D;
+        document.getElementById('bhHour').textContent  = displayHour;
+
+        // 1st row: GM
+        tbody.insertAdjacentHTML('beforeend', `
+          <tr>
+            ${hasHour
+               ? `<td class="${hGmClass}">${hGm}&nbsp;</td>`
+               : `<td>&nbsp;</td>`
+            }
+            <td class="${dGmClass}">${dGm}&nbsp;</td>
+            <td class="${mGmClass}">${mGm}&nbsp;</td>
+            <td class="${yGmClass}">${yGm}&nbsp;</td>
+          </tr>`);
+
+        // 2nd row: Stem
+        tbody.insertAdjacentHTML('beforeend', `
+        <tr>
+          ${hasHour
+             ? `<td class="stem-cell ${hStemClass}">
+              <div>${hStemPinyin}</div>
+              <div>${hStemChar}</div>
+              <div>${hStemOrgan}</div>
+            </td>`
+             : `<td>&nbsp;</td>`
+          }
+        <td class="stem-cell ${dStemClass}">
+          <div>${dStemPinyin}</div>
+          <div>${dStemChar}</div>
+          <div>${dStemOrgan}</div>
+        </td>
+        <td class="stem-cell ${mStemClass}">
+          <div>${mStemPinyin}</div>
+          <div>${mStemChar}</div>
+          <div>${mStemOrgan}</div>
+        </td>
+        <td class="stem-cell ${yStemClass}">
+          <div>${yStemPinyin}</div>
+          <div>${yStemChar}</div>
+          <div>${yStemOrgan}</div>
+        </td>
+        </tr>`);
+        // 3rd row: Stem
+        tbody.insertAdjacentHTML('beforeend', `
+        <tr>
+            ${hasHour
+              ? `<td class="stem-cell ${hBranchClass}">
+              <div>${hBranchPinyin}</div>
+              <div>${hBranchChar}</div>
+              <div>${hBranchOrgan}</div>
+              </td>`
+              : `<td>&nbsp;</td>`
+            }
+        <td class="stem-cell ${dBranchClass}">
+          <div>${dBranchPinyin}</div>
+          <div>${dBranchChar}</div>
+          <div>${dBranchOrgan}</div>
+        </td>
+        <td class="stem-cell ${mBranchClass}">
+          <div>${mBranchPinyin}</div>
+          <div>${mBranchChar}</div>
+          <div>${mBranchOrgan}</div>
+        </td>
+        <td class="stem-cell ${yBranchClass}">
+          <div>${yBranchPinyin}</div>
+          <div>${yBranchChar}</div>
+          <div>${yBranchOrgan}</div>
+        </td>
+        </tr>`);
+        // 4th row: HS
+        tbody.insertAdjacentHTML('beforeend', `
+          <tr>
+            ${hasHour
+              ? `<td >
+                <div class="hs-flex">
+                  ${hHiddenStems.map(hs =>
+                    `<div class="hs-item bg-${hs.phase.toLowerCase()}">
+                       ${hs.pinyin} ${hs.chinese_char}
+                     </div>`
+                  ).join('')}
+                </div>
+              </td>`
+              : `<td>&nbsp;</td>`
+            }
+            <td>
+              <div class="hs-flex">
+                ${dHiddenStems.map(hs =>
+                  `<div class="hs-item bg-${hs.phase.toLowerCase()}">
+                     ${hs.pinyin} ${hs.chinese_char}
+                   </div>`
+                ).join('')}
+              </div>
+            </td>
+            <td>
+              <div class="hs-flex">
+                ${mHiddenStems.map(hs =>
+                  `<div class="hs-item bg-${hs.phase.toLowerCase()}">
+                     ${hs.pinyin} ${hs.chinese_char}
+                   </div>`
+                ).join('')}
+              </div>
+            </td>
+            <td>
+              <div class="hs-flex">
+                ${yHiddenStems.map(hs =>
+                  `<div class="hs-item bg-${hs.phase.toLowerCase()}">
+                     ${hs.pinyin} ${hs.chinese_char}
+                   </div>`
+                ).join('')}
+              </div>
+            </td>
+          </tr>
+        `);
+
+
+        rowContainer.style.display = 'block';
+
+      } catch (err) {
+        console.error('Chinese-date error:', err);
+        alert(`⚠️ Error calculating Chinese date:\n${err.message}`);
+      }
+    });
+  </script>
+
+</body>
+
+</html>
